@@ -1,0 +1,106 @@
+<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no' />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<title>Movie_DB_Board</title>
+<h1 align="center">Movie_DB's Board</h1>
+<br>
+{%if userid%}
+<p align="center"><a href="/">Main</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/myinfo">My Info</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout">Logout</a></p>
+<p align="center">Hello, {{userid}}!</p>
+{%endif%}
+{%if not userid%}
+<p align="center"><a href="/">Main</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/login">Login</a></p>
+{%endif%}
+
+
+<div class="container my-3">
+        <form method="POST">
+            <label><b>Order by</b></label><br>
+            <select name="rank" type="rank" onchange="this.form.submit()">
+                <option value="score" {% if rank=='score' %} selected {% endif %}>Score</option>
+                <option value="year" {% if rank=='year' %} selected {% endif %}>Year</option>
+                <option value="time" {% if rank=='running_time' %} selected {% endif %}>Time</option>
+                {%if userid%}
+                <option value="mypick" {% if rank=='mypick' %} selected {% endif %}>My Pick</option>
+                {%endif%}
+            </select>
+        </form>
+
+        <form method="POST">
+            <label><b>Genre</b></label><br>
+            <select name="genre" type="genre" onchange="this.form.submit()">
+                <option value="all" {% if genre=='' %} selected {% endif %}>ALL</option>
+                {% for g in genre_list %}
+                <option value= {% for i in g %} {{i}} {% if genre== i %} selected {% endif %}>{{i}} {% endfor %}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <form method="POST">
+            <div class="form-group">
+            <select name="search_type" type="search_type">
+                <option value="title" {% if search_type=='title' %} selected {% endif %}>Title</option>
+                <option value="director" {% if search_type=='director' %} selected {% endif %}>Director</option>
+                <option value="writer" {% if search_type=='writer' %} selected {% endif %}>Writer</option>
+                <option value="actor" {% if search_type=='actor' %} selected {% endif %}>Actor</option>
+            </select>
+            <input type="text" class="form-control" id="search"
+                   {% if not search %}
+                   placeholder="Search"
+                   {% endif %}
+                   {% if search %}
+                   placeholder= {{search}}
+                   {% endif %}
+                   name="search"/>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" name='clear' value="clear" class="btn btn-primary">Clear</button>
+        </div>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr class="thead-dark">
+            <th>Rank</th>
+            <th class="text-center">Title</th>
+            <th>Year</th>
+            <th>Score</th>
+            <th>Time</th>
+            <th>Rating</th>
+            <th>Country</th>
+            <th>Genre</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if movie_list %}
+        {% for i in movie_id %}
+        <tr>
+            <td align="center">{{ loop.index }}</td>
+            <td align="center">
+                <a href="/board/movie/{{ i }}/">{{ movie_list[i][0] }}</a>
+            </td>
+            <td align="center">{{ movie_list[i][1] }}</td>
+            <td align="center">{{ movie_list[i][2] }}</td>
+            <td align="center">{{ movie_list[i][3] }}</td>
+            <td align="center">{{ movie_list[i][4] }}</td>
+            <td align="center">
+            {% for country in movie_list[i][5] %}
+            {{ country }}
+            {% endfor %}
+            </td>
+            <td align="center">
+            {% for genre in movie_list[i][6] %}
+            {{ genre }}
+            {% endfor %}
+            </td>
+        </tr>
+        {% endfor%}
+        {% endif %}
+        {% if not movie_list %}
+        <tr>
+        <td colspan="3"><b>There's no item.</b></td>
+        </tr>
+        {% endif %}
+    </table>
+</div>

@@ -1,0 +1,231 @@
+<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no' />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<title>My Info</title>
+<h1 align="center">My Information</h1><br><br>
+
+<div class="container my-3">
+  <label><b>My Info</b></label>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="color:gray" class="text-center" scope="col">ID</th>
+        <th style="color:gray" class="text-center" scope="col">AGE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {% for ui in user_info%}
+        <td align="center">
+          <a href="/myinfo/pw_change"><b>{{ui[0]}}</b></a>
+        </td>
+        <td align="center">
+          <a href="/myinfo/age_change"><b>{{ui[1]}}</b></a>
+        </td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+  <label>You can watch movies rated</label>
+  {%if user_info[0][1]>=18%}
+  <label><b>18 </b></label>
+  {%endif%}
+  {%if user_info[0][1]>=15%}
+  <label><b>15 </b></label>
+  {%endif%}
+  {%if user_info[0][1]>=12%}
+  <label><b>12 </b></label>
+  {%endif%}
+  <label><b>ALL </b></label>
+</div>
+
+<div class="container my-3">
+  <label><b>My Pick</b></label>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="color:gray" class="text-center" scope="col">Title</th>
+        <th style="color:gray" class="text-center" scope="col">My Score</th>
+        <th style="color:gray" class="text-center" scope="col">Country</th>
+        <th style="color:gray" class="text-center" scope="col">Genre</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if users_pick %}
+      {% for up in users_pick %}
+      <tr>
+        <td align="center">
+          {% for title in up[0] %}
+          <b>{{title}}</b>
+          {% endfor %}
+        </td>
+        <td align="center">
+          {% for score in up[1] %}
+          <b>{{score}}</b>
+          {% endfor %}
+        </td>
+        <td align="center">
+          {% for country in up[2]%}
+          <b>{{country}} </b>
+          {% endfor %}
+        </td>
+        <td align="center">
+          {% for genre in up[3]%}
+          <b>{{genre}} </b>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor%}
+    {% else %}
+      <tr>
+        <td colspan="3"><b>There's no item. Go to board and pick your movie.</b></td>
+      </tr>
+    {% endif %}
+    </tbody>
+  </table>
+  <label>You have chosen <b>{{total_count}}</b> movies. Pick more.</label>
+</div>
+
+<div class="container my-3">
+  <label><b>My Genre</b></label>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="color:gray" class="text-center" scope="col">Genre</th>
+        <th style="color:gray" class="text-center" scope="col">Count</th>
+        <th style="color:gray" class="text-center" scope="col">Percentage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if users_pick %}
+      {% for gi in genre_info%}
+      <tr>
+        <td align="center"><b>{{gi[0]}}</b></td>
+        <td align="center"><b>{{gi[1]}}</b></td>
+        <td align="center"><b>{{(gi[1]/total_count)|round(2)*100}}%</b></td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="3"><b>There's no item. Go to board and pick your movie.</b></td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  {% if users_pick %}
+  <label>Your favorite genre is <b>{{genre_info[0][0]}}</b>.</label>
+  {% endif %}
+</div>
+
+<div class="container my-3">
+  {%if users_pick%}
+  <form method="POST">
+    <center>
+      <div class="form-group">
+        <label for="title">In your movie picks</label>
+        <input style="width:300px" type="text" class="form-control" id="title"
+               {%if not deletemsg%}
+               placeholder="Enter the title"
+               {% endif %}
+               {%if deletemsg=='Success'%}
+               placeholder='Success'
+               {% endif %}
+               {%if deletemsg=='Fail'%}
+               placeholder='Fail'
+               {% endif %}
+               name="title"/>
+      </div>
+      <button type="submit" class="btn btn-primary">Delete</button>
+    </center>
+  </form>
+  {%endif %}
+</div>
+
+<div class="container my-3">
+  {%if users_pick%}
+  <label><b>How about this movie?</b></label>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="color:gray" class="text-center" scope="col">Subject</th>
+        <th style="color:gray" class="text-center" scope="col">Content</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in movie %}
+      <tr>
+        <td align="center"><b>Title</b></td>
+        <td align="center">
+          <a href="/board/movie/{{ m[0] }}/">{{ m[1] }}</a>
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><b>Year</b></td>
+        <td align="center">{{m[2]}}</td>
+      </tr>
+      <tr>
+        <td align="center"><b>Score</b></td>
+        <td align="center">{{m[3]}}</td>
+      </tr>
+      <tr>
+        <td align="center"><b>Running Time</b></td>
+        <td align="center">{{m[4]}}</td>
+      </tr>
+      <tr>
+        <td align="center"><b>Rating</b></td>
+        <td align="center">{{m[5]}}</td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td align="center"><b>Country</b></td>
+        <td align="center">
+          {% for c in country%}
+          {{c[0]}}<br>
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><b>Genre</b></td>
+        <td align="center">
+          {% for g in genre%}
+          {{g[0]}}<br>
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><b>Director</b></td>
+        <td align="center">
+          {% for d in director%}
+          {{d[0]}}<br>
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><b>Writer</b></td>
+        <td align="center">
+          {% for w in writer%}
+          {{w[0]}}<br>
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><b>Actor/Role</b></td>
+        <td align="center">
+          {% for a in actor%}
+          {{a[0]}}/{{a[1]}}<br>
+          {% endfor %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+
+
+<br>
+<br>
+<p align="center"><a href="/board">Back to board</a></p>
+<p align="center"><a href="/">Main</a></p>
+<p align="center"><a href="/logout">Logout</a></p>
